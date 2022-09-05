@@ -1,4 +1,4 @@
-### 代码托管
+### 提醒我怎么代码托管
 ```
 git add .
 git commit -m "add files"
@@ -8,4 +8,4 @@ git remote add origin https://github.com/Reol077/vue_shop.git
 git branch -M main
 git push -u origin main
 ```
-
+### 后端服务器在vue_api_server文件夹
