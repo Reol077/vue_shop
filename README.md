@@ -8,4 +8,4 @@ git remote add origin https://github.com/Reol077/vue_shop.git
 git branch -M main
 git push -u origin main
 ```
-麻了啊，怎么一直出错啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊
+
