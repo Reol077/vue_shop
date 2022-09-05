@@ -1,19 +1,10 @@
-# vue_shop
-
-## Project setup
+### 代码托管
 ```
-npm install
+git add .
+git commit -m "add files"
+git status
+git remote rm origin
+git remote add origin https://github.com/Reol077/vue_shop.git
+git branch -M main
+git push -u origin main
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
