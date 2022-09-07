@@ -46,7 +46,7 @@ export default {
       },
       // 这是表单的验证规则对象
       loginFormRules: {
-        // 验证用户名是否合法
+        // 验证用户名是否合法1
         username: [
           { required: true, message: "请输入用户名", trigger: "blur" },
           { min: 3, max: 10, message: "长度在 3 到 10 个字符", trigger: "blur" }

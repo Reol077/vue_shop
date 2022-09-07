@@ -24,7 +24,7 @@
           router
           :default-active="activePath"
         >
-          <!-- 一级菜单 -->
+          <!-- 一级菜单1 -->
           <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
             <!-- 一级菜单的模板 -->
             <template slot="title">
