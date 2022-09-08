@@ -105,7 +105,7 @@
       </span>
     </el-dialog>
     <!-- 编辑对话框 -->
-    <el-dialog title="修改角色" :visible.sync="editDialogVisible" width="30%">
+    <el-dialog title="修改角色" :visible.sync="editDialogVisible" width="50%">
       <el-form :model="editRolesForm" :rules="editFormRules" ref="editFormRef" label-width="100px">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="editRolesForm.roleName"></el-input>
@@ -117,6 +117,27 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="editFormInfo">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分配权限的对话框 -->
+    <el-dialog
+      title="分配权限"
+      :visible.sync="setRightDialogVisible"
+      width="50%"
+      @close="setRightDialogClosed"
+    >
+      <el-tree
+        :data="rightslist"
+        :props="treeProps"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="defkeys"
+        ref="treeRef"
+      ></el-tree>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRightDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="allotRights">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -132,6 +153,8 @@ export default {
       addDialogVisible: false,
       // 编辑对话框的显示和隐藏
       editDialogVisible: false,
+      // 分配权限对话框的显示和隐藏
+      setRightDialogVisible: false,
       // 添加角色的表单数据
       addRolesForm: {
         roleName: "",
@@ -147,7 +170,27 @@ export default {
         ]
       },
       // 编辑角色的表单数据
-      editRolesForm: {}
+      editRolesForm: {},
+      // 编辑角色的表单验证规则
+      editFormRules: {
+        roleName: [
+          { required: true, message: "请输入角色名称", trigger: "blur" }
+        ],
+        roleDesc: [
+          { required: true, message: "请输入角色描述", trigger: "blur" }
+        ]
+      },
+      // 获取权限的列表
+      rightslist: [],
+      // 树形控件的属性绑定对象
+      treeProps: {
+        label: "authName",
+        children: "children"
+      },
+      // 默认选中的节点的id
+      defkeys: [],
+      // 即将分配角色的id
+      roleId: ""
     };
   },
   created() {
@@ -166,7 +209,7 @@ export default {
       this.$refs.addRolesForm.validate(async valid => {
         if (!valid) return;
         const { data: res } = await this.$http.post("roles", this.addRolesForm);
-        console.log(res);
+        // console.log(res);
         if (res.meta.status !== 201) {
           return this.$message.error("添加角色失败!");
         }
@@ -212,7 +255,7 @@ export default {
         return this.$message.error("查询角色失败!");
       }
       this.editRolesForm = res.data;
-      console.log(this.editRolesForm);
+      // console.log(this.editRolesForm);
       this.editDialogVisible = true;
     },
     editFormInfo() {
@@ -258,6 +301,52 @@ export default {
       // 直接调用获取用户的方法会导致展开栏的关闭,这样体验不好
       // 可以直接把返回的最新数据直接赋值
       role.children = res.data;
+    },
+    // 展示分配权限的对话框
+    async showSetRightDialog(role) {
+      this.roleId = role.id;
+      // 获取所有权限的数据
+      const { data: res } = await this.$http.get("rights/tree");
+      if (res.meta.status !== 200)
+        return this.$message.error("获取权限列表失败");
+      // 把获取道德权限数据保存到data
+      this.rightslist = res.data;
+      // console.log(role);
+      // 递归获取三级节点的id
+      this.getLeafKeys(role, this.defkeys);
+      // 显示对话框
+      this.setRightDialogVisible = true;
+    },
+    // 通过递归的形式获取所有角色下三级权限的id
+    getLeafKeys(node, arr) {
+      // 如果当前node节点不包含children，则是三级节点
+      if (!node.children) {
+        return arr.push(node.id);
+      }
+      node.children.forEach(element => {
+        this.getLeafKeys(element, arr);
+      });
+    },
+    // 监听分配权限对话框的关闭事件
+    setRightDialogClosed() {
+      this.defkeys = [];
+    },
+    // 点击为觉得分配权限
+    async allotRights() {
+      const keys = [
+        ...this.$refs.treeRef.getCheckedKeys(),
+        ...this.$refs.treeRef.getHalfCheckedKeys()
+      ];
+      // console.log(keys);
+      const idStr = keys.join(",");
+      const { data: res } = await this.$http.post(
+        `roles/${this.roleId}/rights`,
+        { rids: idStr }
+      );
+      if (res.meta.status !== 200) return this.$message.error("分配权限失败");
+      this.$message.success("分配权限成功");
+      this.getRolesList();
+      this.setRightDialogVisible = false;
     }
   }
 };
