@@ -203,6 +203,7 @@ export default {
       if (res.meta.status !== 200)
         return this.$message.error("获取角色列表失败");
       this.rolelist = res.data;
+      // console.log(res.data)
     },
     // 添加角色
     addRolesUser() {
@@ -280,8 +281,8 @@ export default {
     async removeRightById(role, rightId) {
       // 弹框提示用户是否删除对应的权限
       const confirmRusult = await this.$confirm(
-        "此操作将永久删除该角色, 是否继续?",
-        "删除角色",
+        "此操作将永久删除该权限, 是否继续?",
+        "删除权限",
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",

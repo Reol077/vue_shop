@@ -300,7 +300,7 @@ export default {
       // console.log(id)
       const { data: res } = await this.$http.get("users/" + id);
       if (res.meta.status !== 200) {
-        return this.$message.error("查询用户信息失败");
+        return this.$message.error("启用用户信息失败");
       }
       this.editForm = res.data;
       this.editDialogVisible = true;

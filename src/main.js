@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/index.js'
 import './plugins/element.js'
+import TreeTable from 'vue-table-with-tree-grid'
+
 
 // 导入字体图标
 import './assets/fonts/iconfont.css'
@@ -19,9 +21,12 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
+// 挂载到vue示例上
 Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
+
+Vue.component('tree-table', TreeTable)
 
 new Vue({
   router,
