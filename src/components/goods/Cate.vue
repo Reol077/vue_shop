@@ -160,7 +160,7 @@ export default {
         // 将要添加的分类名称
         cat_name: "",
         // 父级分类的id
-        cat_id: 0,
+        cat_pid: 0,
         // 分类的等级，默认添加一级分类
         cat_level: 0
       },
@@ -207,7 +207,7 @@ export default {
       });
       if (res.meta.status !== 200)
         return this.$message.error("获取商品分类列表失败");
-      console.log(res.data);
+      // console.log(res.data);
       this.catelist = res.data.result;
       this.total = res.data.total;
     },
@@ -244,28 +244,29 @@ export default {
       // 反之说明没有选择任何父级分类
       if (this.selectedKeys.length > 0) {
         // 父级分类的id
-        this.addCateForm.cat_id = this.selectedKeys[
+        this.addCateForm.cat_pid = this.selectedKeys[
           this.selectedKeys.length - 1
         ];
         this.addCateForm.cat_level = this.selectedKeys.length;
         return;
       } else {
-        this.addCateForm.cat_id = 0;
+        this.addCateForm.cat_pid = 0;
         this.addCateForm.cat_level = 0;
       }
     },
     // 点击按钮，添加新的分类
     addCate() {
+      console.log(this.addCateForm);
       this.$refs.addCateFormRef.validate(async valid => {
         if (!valid) return;
         const { data: res } = await this.$http.post(
           "categories",
           this.addCateForm
         );
-        console.log(res);
-        if (res.meta.status !== 201)
-          return this.$message.error("添加分类失败！");
-        this.$message.success("添加分类成功！");
+        if (res.meta.status !== 201) {
+          return this.$message.error("添加分类失败!");
+        }
+        this.$message.success("添加分类成功!");
         this.getCateList();
         this.addCateDialogVisible = false;
       });
@@ -275,7 +276,17 @@ export default {
       this.$refs.addCateFormRef.resetFields();
       this.selectedKeys = [];
       this.addCateForm.cat_level = 0;
-      this.addCateForm.cat_id = 0;
+      this.addCateForm.cat_pid = 0;
+    },
+    async showeditCateDialog(cateInfo) {
+      this.editCateId = cateInfo.cat_id;
+      const { data: res } = await this.$http.get(
+        "categories/" + cateInfo.cat_id
+      );
+      this.editCate = res.data;
+      // console.log(this.editCate);
+      // console.log(res.data)
+      this.editCateDialogVisbel = true;
     },
     // 编辑分类信息
     async editCateInfo() {
