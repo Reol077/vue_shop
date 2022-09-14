@@ -10,8 +10,8 @@
     <el-card>
       <el-row>
         <el-col :span="8">
-          <el-input placeholder="请输入内容">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入内容" v-model="queryInfo.query">
+            <el-button slot="append" icon="el-icon-search" @click="getOrderList()" @keyup.enter.native="getOrderList()"></el-button>
           </el-input>
         </el-col>
       </el-row>
@@ -139,6 +139,7 @@ export default {
       });
       if (res.meta.status !== 200)
         return this.$message.error("获取订单列表失败");
+    this.$message.success("获取订单列表成功");
       this.total = res.data.total;
       this.orderlist = res.data.goods;
     },
